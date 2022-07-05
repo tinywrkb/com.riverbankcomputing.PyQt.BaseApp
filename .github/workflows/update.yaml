@@ -256,6 +256,19 @@ jobs:
               if [ "$open_pr_ref" = "${{ env.BASEAPP_PR_BRANCH }}" ]; then
                 open_pr_url="$(go-yq 'map(select(.head.ref == "${{ env.BASEAPP_PR_BRANCH }}") | select(.state == "open") | .html_url ) | .[0]' .tmp.pull.json)"
                 echo "Found open pull request at $open_pr_url"
+                # TODO: implement merging
+                #       if open
+                #       read head commit sha and merge commit sha
+                #       get status url for head commit
+                #       for each build id in status url
+                #       check if the last status entry's [0] state is success
+                #       merge and delete
+                #       if pending then move on
+                #       example status https://api.github.com/repos/flathub/com.riverbankcomputing.PyQt.BaseApp/statuses/1b76a530352aaafeaf600485e7816d1c71465031
+                #       example pulls https://api.github.com/repos/flathub/com.riverbankcomputing.PyQt.BaseApp/pulls?head=update-4726f69&base=branch/6.2&state=closed
+                #       example pull jq 'map(select(.head.ref == "update-4726f69") | select(.state == "closed")  ) | .[0]' pulls.json > pull.json
+                #       make sure to merge using the merge sha, and avoid merging with outdate status
+                #       check if merge was successful, Status: 200
 
               elif [ "$closed_pr_ref" = "${{ env.BASEAPP_PR_BRANCH }}" ]; then
                 closed_pr_url="$(go-yq 'map(select(.head.ref == "${{ env.BASEAPP_PR_BRANCH }}") | select(.state == "closed") | .html_url ) | .[0]' .tmp.pull.json)"
